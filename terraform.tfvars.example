@@ -1,0 +1,10 @@
+# Copy this file to terraform.tfvars and fill in your actual values
+
+# Twilio Configuration
+# Get these from your Twilio Console: https://console.twilio.com
+twilio_account_sid  = "ACXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
+twilio_auth_token   = "your_auth_token_here"
+twilio_from_number  = "+1234567890"  # Your Twilio phone number
+
+# SMS Configuration
+to_number = "+1234567890"  # Phone number to receive alerts

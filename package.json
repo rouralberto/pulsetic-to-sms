@@ -1,0 +1,21 @@
+{
+  "name": "pulsetic-to-sms",
+  "version": "1.0.0",
+  "description": "AWS Lambda function to receive Pulsetic alerts and send SMS via Twilio",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "twilio": "5.8.0"
+  },
+  "keywords": [
+    "aws",
+    "lambda",
+    "pulsetic",
+    "twilio",
+    "sms"
+  ],
+  "author": "",
+  "license": "ISC"
+}
