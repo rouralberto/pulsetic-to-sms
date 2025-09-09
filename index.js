@@ -24,13 +24,30 @@ exports.handler = async (event) => {
         console.log('Parsed body:', JSON.stringify(body, null, 2));
 
         // Extract Pulsetic notification data
-        if (!body.embeds || !Array.isArray(body.embeds) || body.embeds.length === 0) {
-            throw new Error('Invalid Pulsetic notification format - no embeds found');
+        const alertType = body.alert_type || 'unknown';
+        const monitor = body.monitor;
+
+        if (!monitor) {
+            throw new Error('Invalid Pulsetic notification format - no monitor data found');
         }
 
-        const embed = body.embeds[0];
-        const title = embed.title || 'Pulsetic Alert';
-        const description = embed.description || 'No description provided';
+        // Create title and description based on alert type and monitor data
+        let title = 'Pulsetic Alert';
+        let description = '';
+
+        switch (alertType) {
+            case 'monitor_offline':
+                title = `🚨 Monitor Offline: ${monitor.name}`;
+                description = `URL: ${monitor.url}\nResponse Code: ${monitor.response_code}\nReason: ${monitor.fail_reason || 'Unknown'}`;
+                break;
+            case 'monitor_online':
+                title = `✅ Monitor Online: ${monitor.name}`;
+                description = `URL: ${monitor.url}\nMonitor is back online`;
+                break;
+            default:
+                title = `📊 Pulsetic Alert: ${monitor.name}`;
+                description = `URL: ${monitor.url}\nAlert Type: ${alertType}`;
+        }
 
         // Create SMS message from the Pulsetic alert
         const smsMessage = `${title}\n\n${description}`;
