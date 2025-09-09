@@ -53,23 +53,57 @@ This project creates an AWS Lambda function with a public function URL that can 
 Once deployed, the Lambda function will automatically:
 
 1. Receive POST requests from Pulsetic with alert data
-2. Parse the alert information (title, description, status)
-3. Send an SMS notification to the configured phone number
-4. Return a success/error response to Pulsetic
+2. Parse the alert type and monitor information
+3. Format SMS messages with relevant details (monitor name, URL, status, response codes)
+4. Send SMS notifications to the configured phone number
+5. Return a success/error response to Pulsetic
+
+### Supported Alert Types
+The function handles different Pulsetic alert types:
+- **monitor_offline**: 🚨 Alert when a monitor goes offline with response code and failure reason
+- **monitor_online**: ✅ Alert when a monitor comes back online
+- **Other alerts**: 📊 Generic alert format with monitor details
 
 ### Expected Pulsetic Payload
 The function expects Pulsetic alerts in this format:
 
 ```json
 {
-  "embeds": [
-    {
-      "title": "Pulsetic notification",
-      "description": "<url> became online! \n It was down for <downtime> \n For more information visit <url>",
-      "color": "7506394"
-    }
-  ]
+  "alert_type": "monitor_offline",
+  "monitor": {
+    "id": 74710,
+    "url": "https://example.com",
+    "name": "Example Monitor",
+    "response_code": 500,
+    "fail_reason": "Connection timeout"
+  }
 }
+```
+
+#### Payload Fields
+- `alert_type`: Type of alert (e.g., "monitor_offline", "monitor_online")
+- `monitor.id`: Unique monitor identifier
+- `monitor.url`: The URL being monitored
+- `monitor.name`: Human-readable monitor name
+- `monitor.response_code`: HTTP response code (for offline alerts)
+- `monitor.fail_reason`: Reason for failure (for offline alerts)
+
+#### SMS Message Format
+SMS messages are formatted based on the alert type:
+
+**Monitor Offline:**
+```
+🚨 Monitor Offline: [Monitor Name]
+URL: [URL]
+Response Code: [Code]
+Reason: [Fail Reason]
+```
+
+**Monitor Online:**
+```
+✅ Monitor Online: [Monitor Name]
+URL: [URL]
+Monitor is back online
 ```
 
 ## Architecture
